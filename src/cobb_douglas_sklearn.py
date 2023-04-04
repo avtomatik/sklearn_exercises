@@ -10,6 +10,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+from data.collect import combine_cobb_douglas
 from numpy.fft import rfft
 from sklearn.datasets import load_iris
 from sklearn.linear_model import Lasso, LinearRegression
@@ -25,8 +26,6 @@ from sklearn.preprocessing import StandardScaler
 # =============================================================================
 from sklearn.svm import SVC
 from transform import transform_cobb_douglas
-
-from data.collect import stockpile_cobb_douglas
 
 
 def plot_discrete_fourier_transform(array: np.ndarray) -> None:
@@ -74,10 +73,10 @@ MAP_FIG = {
 os.chdir(DIR)
 
 # plot_cobb_douglas(
-#     *stockpile_cobb_douglas().pipe(transform_cobb_douglas),
+#     *combine_cobb_douglas().pipe(transform_cobb_douglas),
 #     MAP_FIG
 # )
-print(*stockpile_cobb_douglas().pipe(transform_cobb_douglas))
+print(*combine_cobb_douglas().pipe(transform_cobb_douglas))
 
 X, y = get_data_frame().pipe(get_X_y)
 

@@ -7,7 +7,7 @@ Created on Mon Mar  2 21:32:51 2020
 """
 
 
-from data.collect import stockpile_cobb_douglas
+from data.collect import combine_cobb_douglas
 
 X, y = get_data_frame().pipe(get_X_y)
 

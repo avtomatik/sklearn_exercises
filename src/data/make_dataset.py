@@ -11,7 +11,7 @@ import os
 from functools import cache
 
 import numpy as np
-from collect import stockpile_cobb_douglas
+from collect import combine_cobb_douglas
 from pandas import DataFrame
 from transform import transform_cobb_douglas
 
@@ -19,7 +19,7 @@ from transform import transform_cobb_douglas
 @cache
 def get_data_frame(path_src: str = "../../data/interim") -> DataFrame:
     os.chdir(path_src)
-    return stockpile_cobb_douglas()
+    return combine_cobb_douglas()
 
 
 def get_X_y(df: DataFrame) -> tuple[np.ndarray]:

@@ -6,11 +6,10 @@ This is a temporary script file.
 """
 
 
+from data.collect import combine_cobb_douglas
 from pandas import DataFrame
 
-from data.collect import stockpile_cobb_douglas
-
-stockpile_cobb_douglas().pipe(transform_cobb_douglas, year_base=1899)[0].iloc[:, [3, 4]]
+combine_cobb_douglas().pipe(transform_cobb_douglas, year_base=1899)[0].iloc[:, [3, 4]]
 print(df.info())
 
 dataset = np.array(df)
@@ -48,5 +47,5 @@ for file_name in os.listdir(DIR):
 # TODO: Revise Fixed Assets Turnover Approximation with Lasso
 # =============================================================================
 
-stockpile_cobb_douglas().pipe(transform_cobb_douglas, year_base=1899)[
+combine_cobb_douglas().pipe(transform_cobb_douglas, year_base=1899)[
     0].iloc[:, [6]].pipe(plot_turnover)

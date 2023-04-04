@@ -11,6 +11,8 @@ from functools import cache
 
 import matplotlib.pyplot as plt
 import numpy as np
+from data.collect import combine_cobb_douglas
+from data.transform import transform_cobb_douglas
 from pandas import DataFrame
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression, RANSACRegressor
@@ -20,9 +22,6 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 from sklearn.svm import SVR
 from sklearn.tree import DecisionTreeRegressor
-
-from data.collect import stockpile_cobb_douglas
-from data.transform import transform_cobb_douglas
 
 
 def lin_regplot(X, y, model):
@@ -34,7 +33,7 @@ def lin_regplot(X, y, model):
 @cache
 def get_data_frame(path_src: str = "../data/interim") -> DataFrame:
     os.chdir(path_src)
-    return stockpile_cobb_douglas()
+    return combine_cobb_douglas()
 
 
 def get_X_y(df: DataFrame) -> tuple[np.ndarray]:
