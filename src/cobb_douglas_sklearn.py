@@ -10,10 +10,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from lib.collect import stockpile_cobb_douglas
-from lib.transform import transform_cobb_douglas_sklearn
 from numpy.fft import rfft
-
 from sklearn.datasets import load_iris
 from sklearn.linear_model import Lasso, LinearRegression
 from sklearn.metrics import r2_score
@@ -27,6 +24,9 @@ from sklearn.preprocessing import StandardScaler
 # Support Vector Machine
 # =============================================================================
 from sklearn.svm import SVC
+from transform import transform_cobb_douglas
+
+from data.collect import stockpile_cobb_douglas
 
 
 def plot_discrete_fourier_transform(array: np.ndarray) -> None:
@@ -61,7 +61,7 @@ def plot_discrete_fourier_transform(array: np.ndarray) -> None:
     plt.show()
 
 
-DIR = "/home/green-machine/data_science/data/interim"
+DIR = "../data/interim"
 MAP_FIG = {
     'fg_a': 'Chart I Progress in Manufacturing {}$-${} ({}=100)',
     'fg_b': 'Chart II Theoretical and Actual Curves of Production {}$-${} ({}=100)',
@@ -74,13 +74,12 @@ MAP_FIG = {
 os.chdir(DIR)
 
 # plot_cobb_douglas(
-#     *stockpile_cobb_douglas().pipe(transform_cobb_douglas_sklearn),
+#     *stockpile_cobb_douglas().pipe(transform_cobb_douglas),
 #     MAP_FIG
 # )
-print(*stockpile_cobb_douglas().pipe(transform_cobb_douglas_sklearn))
+print(*stockpile_cobb_douglas().pipe(transform_cobb_douglas))
 
-X, y = stockpile_cobb_douglas().pipe(transform_cobb_douglas_sklearn)
-
+X, y = get_data_frame().pipe(get_X_y)
 
 # =============================================================================
 # TODO: Discrete Laplace Transform

@@ -6,10 +6,6 @@
 # =============================================================================
 import numpy as np
 import pandas as pd
-from lib.collect import stockpile_cobb_douglas
-from lib.transform import transform_cobb_douglas
-
-import sklearn
 from sklearn.datasets import load_iris
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
@@ -22,11 +18,15 @@ from sklearn.preprocessing import StandardScaler
 # =============================================================================
 from sklearn.svm import SVC
 
+import sklearn
+from data.collect import stockpile_cobb_douglas
+from data.transform import transform_cobb_douglas
+
 # =============================================================================
 # Labor Capital Intensity
 # Labor Productivity
 # =============================================================================
-X, y = stockpile_cobb_douglas().pipe(transform_cobb_douglas_sklearn)
+X, y = get_data_frame().pipe(get_X_y)
 
 # X = np.transpose(np.atleast_2d(X))  # Required
 

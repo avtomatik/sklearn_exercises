@@ -5,12 +5,11 @@
 import os
 
 import pandas as pd
-
 from sklearn.model_selection import (KFold, LeaveOneOut, LeavePOut,
                                      RepeatedKFold, ShuffleSplit,
                                      TimeSeriesSplit)
 
-X, y = stockpile_cobb_douglas().pipe(transform_cobb_douglas_sklearn)
+X, y = get_data_frame().pipe(get_X_y)
 
 # =============================================================================
 # K-Fold

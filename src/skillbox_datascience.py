@@ -9,7 +9,6 @@ Created on Sun Jun 14 20:45:47 2020
 from pathlib import Path
 
 import pandas as pd
-
 from sklearn.ensemble import GradientBoostingClassifier
 
 DIR = "/home/green-machine/Downloads"

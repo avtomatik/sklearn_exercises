@@ -11,9 +11,7 @@ from functools import cache
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 from pandas import DataFrame
-
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression, RANSACRegressor
 from sklearn.metrics import mean_squared_error, r2_score
@@ -23,71 +21,8 @@ from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 from sklearn.svm import SVR
 from sklearn.tree import DecisionTreeRegressor
 
-
-def transform_cobb_douglas(df: DataFrame, year_base: int) -> tuple[DataFrame, tuple[float]]:
-    """
-        ================== =================================
-        df.index           Period
-        df.iloc[:, 0]      Capital
-        df.iloc[:, 1]      Labor
-        df.iloc[:, 2]      Product
-        ================== =================================
-    """
-    df = df.div(df.loc[year_base, :])
-    # =========================================================================
-    # Labor Capital Intensity
-    # =========================================================================
-    df['lab_cap_int'] = df.iloc[:, 0].div(df.iloc[:, 1])
-    # =========================================================================
-    # Labor Productivity
-    # =========================================================================
-    df['lab_product'] = df.iloc[:, 2].div(df.iloc[:, 1])
-    # =========================================================================
-    # Original: k=0.25, b=1.01
-    # =========================================================================
-    k, b = np.polyfit(
-        np.log(df.iloc[:, -2].astype(float)),
-        np.log(df.iloc[:, -1].astype(float)),
-        deg=1
-    )
-    # =========================================================================
-    # Scipy Signal Median Filter, Non-Linear Low-Pass Filter
-    # =========================================================================
-    # =========================================================================
-    # k, b = np.polyfit(
-    #     np.log(signal.medfilt(df.iloc[:, -2])),
-    #     np.log(signal.medfilt(df.iloc[:, -1])),
-    #     deg=1
-    # )
-    # =========================================================================
-    # =========================================================================
-    # Description
-    # =========================================================================
-    df['cap_to_lab'] = df.iloc[:, 1].div(df.iloc[:, 0])
-    # =========================================================================
-    # Fixed Assets Turnover
-    # =========================================================================
-    df['c_turnover'] = df.iloc[:, 2].div(df.iloc[:, 0])
-    # =========================================================================
-    # Product Trend Line=3 Year Moving Average
-    # =========================================================================
-    df['prod_roll'] = df.iloc[:, 2].rolling(window=3, center=True).mean()
-    df['prod_roll_sub'] = df.iloc[:, 2].sub(df.iloc[:, -1])
-    # =========================================================================
-    # Computed Product
-    # =========================================================================
-    df['prod_comp'] = df.iloc[:, 0].pow(k).mul(
-        df.iloc[:, 1].pow(1-k)).mul(np.exp(b))
-    # =========================================================================
-    # Computed Product Trend Line=3 Year Moving Average
-    # =========================================================================
-    df['prod_comp_roll'] = df.iloc[:, -1].rolling(window=3, center=True).mean()
-    df['prod_comp_roll_sub'] = df.iloc[:, -2].sub(df.iloc[:, -1])
-    # =========================================================================
-    #     print(f"R**2: {r2_score(df.iloc[:, 2], df.iloc[:, 3]):,.4f}")
-    #     print(df.iloc[:, 3].div(df.iloc[:, 2]).sub(1).abs().mean())
-    # =========================================================================
-    return df, (k, np.exp(b))
+from data.collect import stockpile_cobb_douglas
+from data.transform import transform_cobb_douglas
 
 
 def lin_regplot(X, y, model):
@@ -97,12 +32,12 @@ def lin_regplot(X, y, model):
 
 
 @cache
-def get_data_frame(path_src: str = "/home/green-machine/data_science/data/interim") -> tuple[np.ndarray]:
+def get_data_frame(path_src: str = "../data/interim") -> DataFrame:
     os.chdir(path_src)
     return stockpile_cobb_douglas()
 
 
-def get_X_y(df: pd.DataFrame) -> tuple[np.ndarray]:
+def get_X_y(df: DataFrame) -> tuple[np.ndarray]:
     df = df.pipe(
         transform_cobb_douglas,
         year_base=1899
@@ -111,7 +46,6 @@ def get_X_y(df: pd.DataFrame) -> tuple[np.ndarray]:
 
 
 if __name__ == '__main__':
-    df = get_data_frame()
     X, y = get_data_frame().pipe(get_X_y)
 
     lr = LinearRegression()
@@ -135,7 +69,6 @@ if __name__ == '__main__':
 
 
 if __name__ == '__main__':
-    df = get_data_frame()
     X, y = get_data_frame().pipe(get_X_y)
 
     regr = LinearRegression()
@@ -196,7 +129,7 @@ if __name__ == '__main__':
 
 
 if __name__ == '__main__':
-    X, y = get_X_y()
+    X, y = get_data_frame().pipe(get_X_y)
 
     tree = DecisionTreeRegressor(max_depth=1)
     tree.fit(X, y)
@@ -210,7 +143,6 @@ if __name__ == '__main__':
 
 
 if __name__ == '__main__':
-    df = get_data_frame()
     X, y = get_data_frame().pipe(get_X_y)
 
     X_train, X_test, y_train, y_test = train_test_split(
@@ -255,7 +187,6 @@ if __name__ == '__main__':
 
 
 if __name__ == '__main__':
-    df = get_data_frame()
     X, y = get_data_frame().pipe(get_X_y)
 
     X_train, X_test, y_train, y_test = train_test_split(
@@ -299,7 +230,6 @@ if __name__ == '__main__':
 
 
 if __name__ == '__main__':
-    df = get_data_frame()
     X, y = get_data_frame().pipe(get_X_y)
 
     X_train, X_test, y_train, y_test = train_test_split(

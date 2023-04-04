@@ -1,20 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sun Feb  5 00:20:29 2023
+Created on Mon Mar  2 21:32:51 2020
 
 @author: green-machine
 """
 
-# =============================================================================
-# future_projects.py
-# =============================================================================
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Mar  2 21:32:51 2020
-@author: Alexander Mikhailov
-"""
-X, y = stockpile_cobb_douglas().pipe(transform_cobb_douglas_sklearn)
+
+from data.collect import stockpile_cobb_douglas
+
+X, y = get_data_frame().pipe(get_X_y)
 
 solver = LassoCV(cv=4, random_state=0).fit(X, y)
 print(solver.score(X, y))
@@ -140,7 +135,7 @@ Created on Mon Mar  2 21:32:51 2020
 """
 plot_cobb_douglas_new_features(df)
 
-X, y = stockpile_cobb_douglas().pipe(transform_cobb_douglas_sklearn)
+X, y = get_data_frame().pipe(get_X_y)
 
 solver = LassoCV(cv=4, random_state=0).fit(X, y)
 print(solver.score(X, y))

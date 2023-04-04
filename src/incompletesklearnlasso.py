@@ -11,7 +11,6 @@ Created on Sun Jan  8 21:24:18 2023
 
 import matplotlib.pyplot as plt
 import numpy as np
-
 from sklearn.linear_model import Lasso
 
 # =============================================================================
@@ -20,7 +19,7 @@ from sklearn.linear_model import Lasso
 # =============================================================================
 # Labor Productivity
 # =============================================================================
-X, y = stockpile_cobb_douglas().pipe(transform_cobb_douglas_sklearn)
+X, y = get_data_frame().pipe(get_X_y)
 
 
 solver = Lasso(normalize=1)
