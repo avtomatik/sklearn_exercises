@@ -13,6 +13,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.linear_model import Lasso
 
+from data.make_dataset import get_data_frame, get_X_y
+
 # =============================================================================
 # Labor Capital Intensity
 # =============================================================================

@@ -6,14 +6,9 @@ Created on Thu Nov 24 13:45:36 2022
 @author: green-machine
 """
 
-import os
-from functools import cache
 
 import matplotlib.pyplot as plt
 import numpy as np
-from data.collect import combine_cobb_douglas
-from data.transform import transform_cobb_douglas
-from pandas import DataFrame
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression, RANSACRegressor
 from sklearn.metrics import mean_squared_error, r2_score
@@ -23,25 +18,13 @@ from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 from sklearn.svm import SVR
 from sklearn.tree import DecisionTreeRegressor
 
+from data.make_dataset import get_data_frame, get_X_y
+
 
 def lin_regplot(X, y, model):
     plt.scatter(X, y, c='blue')
     plt.plot(X, model.predict(X), color='red')
     return
-
-
-@cache
-def get_data_frame(path_src: str = "../data/interim") -> DataFrame:
-    os.chdir(path_src)
-    return combine_cobb_douglas()
-
-
-def get_X_y(df: DataFrame) -> tuple[np.ndarray]:
-    df = df.pipe(
-        transform_cobb_douglas,
-        year_base=1899
-    )[0].iloc[:, [3, 4]].applymap(np.log)
-    return df.iloc[:, 0].values[:, np.newaxis], df.iloc[:, 1].values
 
 
 if __name__ == '__main__':

@@ -2,31 +2,32 @@
 # Cross-Validation Test on Cobb-Douglas Dataset
 # =============================================================================
 
-import os
 
-import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
 from sklearn.model_selection import (KFold, LeaveOneOut, LeavePOut,
                                      RepeatedKFold, ShuffleSplit,
                                      TimeSeriesSplit)
 
-X, y = get_data_frame().pipe(get_X_y)
+from data.make_dataset import get_data_frame, get_X_y
 
+X, y = get_data_frame().pipe(get_X_y)
 # =============================================================================
 # K-Fold
 # =============================================================================
 
-# kf=KFold(n_splits=4)
+kf = KFold(n_splits=4)
 # =============================================================================
 # Repeated K-Fold
 # =============================================================================
 
-# random_state=12883823
-# rkf=RepeatedKFold(n_splits=2,n_repeats=2,random_state=random_state)
+random_state = 12883823
+rkf = RepeatedKFold(n_splits=2, n_repeats=2, random_state=random_state)
 # =============================================================================
 # Leave One Out (LOO)
 # =============================================================================
 
-# loo=LeaveOneOut()
+loo = LeaveOneOut()
 # =============================================================================
 # Leave P Out (LPO)
 # =============================================================================
@@ -34,9 +35,9 @@ X, y = get_data_frame().pipe(get_X_y)
 # Random Permutations Cross-Validation a.k.a. Shuffle & Split
 # =============================================================================
 
-# lpo=LeavePOut(p=2)
+lpo = LeavePOut(p=2)
 
-# ss=ShuffleSplit(n_splits=2,test_size=0.25,random_state=0)
+ss = ShuffleSplit(n_splits=2, test_size=0.25, random_state=0)
 # =============================================================================
 # Time Series Split
 # =============================================================================

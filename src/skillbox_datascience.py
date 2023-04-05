@@ -11,11 +11,11 @@ from pathlib import Path
 import pandas as pd
 from sklearn.ensemble import GradientBoostingClassifier
 
-DIR = "/home/green-machine/Downloads"
+DIR_SRC = "/home/green-machine/Downloads"
 FILE_NAME = "trips_data.xlsx"
 
 
-trips = pd.read_excel(Path(DIR).joinpath(FILE_NAME))
+trips = pd.read_excel(Path(DIR_SRC).joinpath(FILE_NAME))
 trips_processed = pd.get_dummies(
     trips,
     columns=[

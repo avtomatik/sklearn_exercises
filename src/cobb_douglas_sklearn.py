@@ -10,13 +10,10 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from data.collect import combine_cobb_douglas
-from numpy.fft import rfft
 from sklearn.datasets import load_iris
-from sklearn.linear_model import Lasso, LinearRegression
+from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
-from sklearn.model_selection import (KFold, LeaveOneOut, LeavePOut,
-                                     RepeatedKFold, ShuffleSplit,
+from sklearn.model_selection import (KFold, LeaveOneOut, ShuffleSplit,
                                      TimeSeriesSplit, cross_val_score,
                                      train_test_split)
 from sklearn.pipeline import make_pipeline
@@ -25,42 +22,16 @@ from sklearn.preprocessing import StandardScaler
 # Support Vector Machine
 # =============================================================================
 from sklearn.svm import SVC
-from transform import transform_cobb_douglas
 
+# =============================================================================
+# Kolmogorov-Smirnov Test for Goodness of Fit
+# =============================================================================
+# from scipy.stats import kstest
+from data.combine import combine_cobb_douglas
+from data.make_dataset import get_data_frame, get_X_y
+from data.transform import transform_cobb_douglas
 
-def plot_discrete_fourier_transform(array: np.ndarray) -> None:
-    """
-    Discrete Fourier Transform
-
-    Parameters
-    ----------
-    array : np.ndarray
-        DESCRIPTION.
-
-    Returns
-    -------
-    None
-        DESCRIPTION.
-
-    """
-    # =========================================================================
-    # TODO: Refine It
-    # =========================================================================
-    plt.plot(
-        array,
-        label='Labor Productivity',
-    )
-    plt.plot(
-        rfft(array),
-        'r:',
-        label='Fourier Transform',
-    )
-    plt.grid()
-    plt.legend()
-    plt.show()
-
-
-DIR = "../data/interim"
+DIR_SRC = "../data/interim"
 MAP_FIG = {
     'fg_a': 'Chart I Progress in Manufacturing {}$-${} ({}=100)',
     'fg_b': 'Chart II Theoretical and Actual Curves of Production {}$-${} ({}=100)',
@@ -70,13 +41,13 @@ MAP_FIG = {
     'year_price': 1899,
 }
 
-os.chdir(DIR)
+os.chdir(DIR_SRC)
 
 # plot_cobb_douglas(
 #     *combine_cobb_douglas().pipe(transform_cobb_douglas),
 #     MAP_FIG
 # )
-print(*combine_cobb_douglas().pipe(transform_cobb_douglas))
+print(*combine_cobb_douglas().pipe(transform_cobb_douglas, year_base=1899))
 
 X, y = get_data_frame().pipe(get_X_y)
 
@@ -85,144 +56,142 @@ X, y = get_data_frame().pipe(get_X_y)
 # =============================================================================
 
 
+# =============================================================================
+# Cross Validation
+# =============================================================================
+# =============================================================================
+# K-Fold
+# =============================================================================
 
 
-# # =============================================================================
-# # Cross Validation
-# # =============================================================================
-# # =============================================================================
-# # K-Fold
-# # =============================================================================
+kf = KFold(n_splits=4)
+
+# =============================================================================
+# Repeated K-Fold
+# =============================================================================
 
 
-# # kf = KFold(n_splits=4)
+random_state = 12883823
+rkf = RepeatedKFold(n_splits=2, n_repeats=2, random_state=random_state)
 
-# # =============================================================================
-# # Repeated K-Fold
-# # =============================================================================
+# =============================================================================
+# Leave One Out (LOO)
+# =============================================================================
 
+loo = LeaveOneOut()
 
-# # random_state = 12883823
-# # rkf = RepeatedKFold(n_splits=2, n_repeats=2, random_state=random_state)
-
-# # =============================================================================
-# # Leave One Out (LOO)
-# # =============================================================================
-
-# # loo = LeaveOneOut()
-
-# # =============================================================================
-# # Leave P Out (LPO)
-# # =============================================================================
+# =============================================================================
+# Leave P Out (LPO)
+# =============================================================================
 
 
-# # lpo = LeavePOut(p=2)
+lpo = LeavePOut(p=2)
 
-# # =============================================================================
-# # Random Permutations Cross-Validation a.k.a. Shuffle & Split
-# # =============================================================================
-
-
-# # ss = ShuffleSplit(n_splits=2, test_size=.25, random_state=0)
+# =============================================================================
+# Random Permutations Cross-Validation a.k.a. Shuffle & Split
+# =============================================================================
 
 
-# # =============================================================================
-# # Time Series Split
-# # =============================================================================
-# # =============================================================================
-# # X = np.column_stack(np.log(df.iloc[:, -2]))
-# # =============================================================================
-# tscv = TimeSeriesSplit(n_splits=3)
-# plt.figure()
-# plt.scatter(X, y)
-# # =============================================================================
-# # for _, (train, test) in enumerate(kf.split(X), start=1):
-# #     k, b = np.polyfit(X[train], y[train], deg=1)
-# #     Z = b + k*X
-# #     plt.plot(X, Z, label=f'Test {_:02d}')
-# #
-# # for _, (train, test) in enumerate(rkf.split(X), start=1):
-# #     k, b = np.polyfit(X[train], y[train], deg=1)
-# #     Z = b + k*X
-# #     plt.plot(X, Z, label=f'Test {_:02d}')
-# #
-# # for _, (train, test) in enumerate(loo.split(X), start=1):
-# #     k, b = np.polyfit(X[train], y[train], deg=1)
-# #     Z = b + k*X
-# #     plt.plot(X, Z, label=f'Test {_:02d}')
-# #
-# # for _, (train, test) in enumerate(lpo.split(X), start=1):
-# #     k, b = np.polyfit(X[train], y[train], deg=1)
-# #     Z = b + k*X
-# #     plt.plot(X, Z, label=f'Test {_:02d}')
-# #
-# # for _, (train, test) in enumerate(ss.split(X), start=1):
-# #     k, b = np.polyfit(X[train], y[train], deg=1)
-# #     Z = b + k*X
-# #     plt.plot(X, Z, label=f'Test {_:02d}')
-# # =============================================================================
+ss = ShuffleSplit(n_splits=2, test_size=.25, random_state=0)
 
-# for _, (train, test) in enumerate(tscv.split(X), start=1):
+
+# =============================================================================
+# Time Series Split
+# =============================================================================
+# =============================================================================
+# X = np.column_stack(np.log(df.iloc[:, -2]))
+# =============================================================================
+tscv = TimeSeriesSplit(n_splits=3)
+plt.figure()
+plt.scatter(X, y)
+# =============================================================================
+# for _, (train, test) in enumerate(kf.split(X), start=1):
 #     k, b = np.polyfit(X[train], y[train], deg=1)
 #     Z = b + k*X
 #     plt.plot(X, Z, label=f'Test {_:02d}')
+#
+# for _, (train, test) in enumerate(rkf.split(X), start=1):
+#     k, b = np.polyfit(X[train], y[train], deg=1)
+#     Z = b + k*X
+#     plt.plot(X, Z, label=f'Test {_:02d}')
+#
+# for _, (train, test) in enumerate(loo.split(X), start=1):
+#     k, b = np.polyfit(X[train], y[train], deg=1)
+#     Z = b + k*X
+#     plt.plot(X, Z, label=f'Test {_:02d}')
+#
+# for _, (train, test) in enumerate(lpo.split(X), start=1):
+#     k, b = np.polyfit(X[train], y[train], deg=1)
+#     Z = b + k*X
+#     plt.plot(X, Z, label=f'Test {_:02d}')
+#
+# for _, (train, test) in enumerate(ss.split(X), start=1):
+#     k, b = np.polyfit(X[train], y[train], deg=1)
+#     Z = b + k*X
+#     plt.plot(X, Z, label=f'Test {_:02d}')
+# =============================================================================
 
-# # =============================================================================
-# # b = np.exp(b)
-# # =============================================================================
-
-# k, b = np.polyfit(X, y, deg=1)
-# Z = b + k*X
-# plt.plot(X, Z, label='Test {:02d}'.format(0))
-# plt.legend()
-# plt.grid()
-# plt.show()
+for _, (train, test) in enumerate(tscv.split(X), start=1):
+    k, b = np.polyfit(X[train], y[train], deg=1)
+    Z = b + k*X
+    plt.plot(X, Z, label=f'Test {_:02d}')
 
 # =============================================================================
-# # =============================================================================
-# # Cross Validation Alternative
-# # =============================================================================
+# b = np.exp(b)
+# =============================================================================
 
-# X = np.transpose(np.atleast_2d(X))  # Required
-
-# # =============================================================================
-# # X = np.log(X)
-# # =============================================================================
-# y = np.log(y)
-# loo = LeaveOneOut(y.shape[0])
-# regr = LinearRegression()
-# scores = cross_val_score(
-#     regr, X, y, scoring='mean_squared_error', cv=loo,)
-# print(scores.mean())
+k, b = np.polyfit(X, y, deg=1)
+Z = b + k*X
+plt.plot(X, Z, label='Test {:02d}'.format(0))
+plt.legend()
+plt.grid()
+plt.show()
 
 
-# lr = LinearRegression()
-# lr.fit(X, y)
+# =============================================================================
+# Cross Validation Alternative
+# =============================================================================
 
-# r2 = r2_score(y, lr.predict(X))
-# # =============================================================================
-# # r2 = lr.score(X, y)
-# # =============================================================================
-# print('R2 (test data): {:.2}'.format(r2))
+X = np.transpose(np.atleast_2d(X))  # Required
 
-# kf = KFold(len(X), n_folds=4)
-# # =============================================================================
-# # p = np.zeros_like(y)
-# # =============================================================================
-# for train, test in kf:
-#     lr.fit(X[train], y[train])
-#     p[test] = lr.predict(X[test])
-#     print(lr.predict(X))
+# =============================================================================
+# X = np.log(X)
+# =============================================================================
+y = np.log(y)
+loo = LeaveOneOut(y.shape[0])
+regr = LinearRegression()
+scores = cross_val_score(
+    regr, X, y, scoring='mean_squared_error', cv=loo,)
+print(scores.mean())
 
-# plt.figure(1)
-# plt.scatter(X, y, label='Original')
-# plt.scatter(p, y, label='Linear Fit')
-# plt.title('Labor Capital Intensity & Labor Productivity, 1899--1922')
-# plt.xlabel('Labor Capital Intensity')
-# plt.ylabel('Labor Productivity')
-# plt.legend()
-# plt.grid()
-# plt.show()
+
+lr = LinearRegression()
+lr.fit(X, y)
+
+r2 = r2_score(y, lr.predict(X))
+# =============================================================================
+# r2 = lr.score(X, y)
+# =============================================================================
+print('R2 (test data): {:.2}'.format(r2))
+
+kf = KFold(len(X), n_folds=4)
+# =============================================================================
+# p = np.zeros_like(y)
+# =============================================================================
+for train, test in kf:
+    lr.fit(X[train], y[train])
+    p[test] = lr.predict(X[test])
+    print(lr.predict(X))
+
+plt.figure(1)
+plt.scatter(X, y, label='Original')
+plt.scatter(p, y, label='Linear Fit')
+plt.title('Labor Capital Intensity & Labor Productivity, 1899--1922')
+plt.xlabel('Labor Capital Intensity')
+plt.ylabel('Labor Productivity')
+plt.legend()
+plt.grid()
+plt.show()
 # =============================================================================
 
 # =============================================================================
@@ -294,8 +263,3 @@ result = clf.score(X_test_transformed, y_test)
 cv = ShuffleSplit(n_splits=5, test_size=.3, random_state=0)
 clf = make_pipeline(StandardScaler(), SVC(C=1))
 result = cross_val_score(clf, iris.data, iris.target, cv=cv)
-
-# =============================================================================
-# Kolmogorov-Smirnov Test for Goodness of Fit
-# =============================================================================
-# from scipy.stats import kstest
