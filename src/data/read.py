@@ -30,12 +30,12 @@ def read_usa_hist(filepath_or_buffer: str) -> DataFrame:
         ================== =================================
     """
     MAP = {
-        'douglas.csv': {'series_id': 4, 'period': 5, 'value': 6},
+        'dataset_douglas.zip': {'series_id': 4, 'period': 5, 'value': 6},
         'dataset_usa_brown.zip': {'series_id': 5, 'period': 6, 'value': 7},
-        'cobbdouglas.csv': {'series_id': 5, 'period': 6, 'value': 7},
+        'dataset_usa_cobb-douglas.zip': {'series_id': 5, 'period': 6, 'value': 7},
         'dataset_usa_kendrick.zip': {'series_id': 4, 'period': 5, 'value': 6},
         'dataset_usa_mc_connell_brue.zip': {'series_id': 1, 'period': 2, 'value': 3},
-        'uscb.csv': {'series_id': 9, 'period': 10, 'value': 11},
+        'dataset_uscb.zip': {'series_id': 9, 'period': 10, 'value': 11},
     }
     kwargs = {
         'filepath_or_buffer': filepath_or_buffer,
