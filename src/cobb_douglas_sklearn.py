@@ -10,10 +10,19 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+# =============================================================================
+# Kolmogorov-Smirnov Test for Goodness of Fit
+# =============================================================================
+# from scipy.stats import kstest
+from data.combine import combine_cobb_douglas
+from data.make_dataset import (get_data_frame, get_data_frame_transformed,
+                               get_X_y)
+from data.transform import transform_cobb_douglas
 from sklearn.datasets import load_iris
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
-from sklearn.model_selection import (KFold, LeaveOneOut, ShuffleSplit,
+from sklearn.model_selection import (KFold, LeaveOneOut, LeavePOut,
+                                     RepeatedKFold, ShuffleSplit,
                                      TimeSeriesSplit, cross_val_score,
                                      train_test_split)
 from sklearn.pipeline import make_pipeline
@@ -24,30 +33,28 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 
 # =============================================================================
-# Kolmogorov-Smirnov Test for Goodness of Fit
+# DIR_SRC = "../data/interim"
+# MAP_FIG = {
+#     'fg_a': 'Chart I Progress in Manufacturing {}$-${} ({}=100)',
+#     'fg_b': 'Chart II Theoretical and Actual Curves of Production {}$-${} ({}=100)',
+#     'fg_c': 'Chart III Percentage Deviations of $P$ and $P\'$ from Their Trend Lines\nTrend Lines=3 Year Moving Average',
+#     'fg_d': 'Chart IV Percentage Deviations of Computed from Actual Product {}$-${}',
+#     'fg_e': 'Chart V Relative Final Productivities of Labor and Capital',
+#     'year_base': 1899,
+# }
+#
+# os.chdir(DIR_SRC)
 # =============================================================================
-# from scipy.stats import kstest
-from data.combine import combine_cobb_douglas
-from data.make_dataset import get_data_frame, get_X_y
-from data.transform import transform_cobb_douglas
-
-DIR_SRC = "../data/interim"
-MAP_FIG = {
-    'fg_a': 'Chart I Progress in Manufacturing {}$-${} ({}=100)',
-    'fg_b': 'Chart II Theoretical and Actual Curves of Production {}$-${} ({}=100)',
-    'fg_c': 'Chart III Percentage Deviations of $P$ and $P\'$ from Their Trend Lines\nTrend Lines=3 Year Moving Average',
-    'fg_d': 'Chart IV Percentage Deviations of Computed from Actual Product {}$-${}',
-    'fg_e': 'Chart V Relative Final Productivities of Labor and Capital',
-    'year_price': 1899,
-}
-
-os.chdir(DIR_SRC)
 
 # plot_cobb_douglas(
 #     *combine_cobb_douglas().pipe(transform_cobb_douglas),
 #     MAP_FIG
 # )
-print(*combine_cobb_douglas().pipe(transform_cobb_douglas, year_base=1899))
+
+
+# =============================================================================
+# get_data_frame().pipe(get_data_frame_transformed)
+# =============================================================================
 
 X, y = get_data_frame().pipe(get_X_y)
 
@@ -62,36 +69,27 @@ X, y = get_data_frame().pipe(get_X_y)
 # =============================================================================
 # K-Fold
 # =============================================================================
-
-
 kf = KFold(n_splits=4)
 
 # =============================================================================
 # Repeated K-Fold
 # =============================================================================
-
-
 random_state = 12883823
 rkf = RepeatedKFold(n_splits=2, n_repeats=2, random_state=random_state)
 
 # =============================================================================
 # Leave One Out (LOO)
 # =============================================================================
-
 loo = LeaveOneOut()
 
 # =============================================================================
 # Leave P Out (LPO)
 # =============================================================================
-
-
 lpo = LeavePOut(p=2)
 
 # =============================================================================
 # Random Permutations Cross-Validation a.k.a. Shuffle & Split
 # =============================================================================
-
-
 ss = ShuffleSplit(n_splits=2, test_size=.25, random_state=0)
 
 
@@ -136,9 +134,9 @@ for _, (train, test) in enumerate(tscv.split(X), start=1):
     Z = b + k*X
     plt.plot(X, Z, label=f'Test {_:02d}')
 
-# =============================================================================
-# b = np.exp(b)
-# =============================================================================
+    # =========================================================================
+    # b = np.exp(b)
+    # =========================================================================
 
 k, b = np.polyfit(X, y, deg=1)
 Z = b + k*X
@@ -151,8 +149,11 @@ plt.show()
 # =============================================================================
 # Cross Validation Alternative
 # =============================================================================
+# =============================================================================
+# Required
+# =============================================================================
+X = np.transpose(np.atleast_2d(X))
 
-X = np.transpose(np.atleast_2d(X))  # Required
 
 # =============================================================================
 # X = np.log(X)

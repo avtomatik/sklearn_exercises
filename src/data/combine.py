@@ -9,9 +9,8 @@ Created on Tue Apr  4 22:02:35 2023
 
 from operator import itemgetter
 
-from pandas import DataFrame
-
 from data.collect import stockpile_usa_hist
+from pandas import DataFrame
 
 
 def combine_cobb_douglas(series_number: int = 3) -> DataFrame:

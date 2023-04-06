@@ -9,6 +9,7 @@ Created on Thu Nov 24 13:45:36 2022
 
 import matplotlib.pyplot as plt
 import numpy as np
+from data.make_dataset import get_data_frame, get_X_y
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression, RANSACRegressor
 from sklearn.metrics import mean_squared_error, r2_score
@@ -17,8 +18,6 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 from sklearn.svm import SVR
 from sklearn.tree import DecisionTreeRegressor
-
-from data.make_dataset import get_data_frame, get_X_y
 
 
 def lin_regplot(X, y, model):

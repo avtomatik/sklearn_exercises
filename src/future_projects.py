@@ -9,13 +9,12 @@ Created on Mon Mar  2 21:32:51 2020
 
 import matplotlib.pyplot as plt
 import numpy as np
+from data.make_dataset import get_data_frame, get_X_y
 from sklearn.linear_model import Lasso, LassoCV, LinearRegression
 from sklearn.metrics import r2_score
 from sklearn.model_selection import (KFold, LeaveOneOut, LeavePOut,
                                      RepeatedKFold, ShuffleSplit,
                                      TimeSeriesSplit, cross_val_score)
-
-from data.make_dataset import get_data_frame, get_X_y
 
 X, y = get_data_frame().pipe(get_X_y)
 
@@ -62,7 +61,7 @@ loo = LeaveOneOut()
 # =============================================================================
 lpo = LeavePOut(p=2)
 
-ss = ShuffleSplit(n_splits=2, test_size=0.25, random_state=0)
+ss = ShuffleSplit(n_splits=2, test_size=.25, random_state=0)
 # =============================================================================
 # Time Series Split
 # =============================================================================
@@ -70,19 +69,17 @@ ss = ShuffleSplit(n_splits=2, test_size=0.25, random_state=0)
 tscv = TimeSeriesSplit(n_splits=3)
 plt.figure()
 plt.scatter(X, y)
-_ = 0
-for train, test in kf.split(X):
-    # for train, test in rkf.split(X):
-    # for train, test in loo.split(X):
-    # for train, test in lpo.split(X):
-    # for train, test in ss.split(X):
-    # for train, test in tscv.split(X):
-    _ += 1
+for _, (train, test) in enumerate(kf.split(X), start=1):
+    # for _, (train, test) in rkf.split(X):
+    # for _, (train, test) in loo.split(X):
+    # for _, (train, test) in lpo.split(X):
+    # for _, (train, test) in ss.split(X):
+    # for _, (train, test) in tscv.split(X):
     f1p = np.polyfit(X[train], y[train], deg=1)
     k, b = f1p
     Z = b+k*X
     plt.plot(X, Z, label='Test {:02d}'.format(_))
-b = np.exp(b)
+    b = np.exp(b)
 f1p = np.polyfit(X, y, deg=1)
 k, b = f1p
 Z = b+k*X
@@ -168,15 +165,13 @@ print(np.polyfit(range(3), [0, 2, 4], deg=1))
 kf = KFold(n_splits=4)
 plt.figure()
 plt.scatter(X, y)
-_ = 0
-for train, test in kf.split(X):
-    _ += 1
-k, b = np.polyfit(X[train],
-                  y[train],
-                  1)
-Z = b + k*X
-plt.plot(X, Z, label='Test {:02d}'.format(_))
-b = np.exp(b)
+for _, (train, test) in enumerate(kf.split(X), start=1):
+    k, b = np.polyfit(X[train],
+                      y[train],
+                      1)
+    Z = b + k*X
+    plt.plot(X, Z, label='Test {:02d}'.format(_))
+    b = np.exp(b)
 
 # =============================================================================
 # Repeated K-Fold
@@ -185,15 +180,13 @@ random_state = 12883823
 rkf = RepeatedKFold(n_splits=2, n_repeats=2, random_state=random_state)
 plt.figure()
 plt.scatter(X, y)
-_ = 0
-for train, test in rkf.split(X):
-    _ += 1
-k, b = np.polyfit(X[train],
-                  y[train],
-                  1)
-Z = b + k*X
-plt.plot(X, Z, label='Test {:02d}'.format(_))
-b = np.exp(b)
+for _, (train, test) in enumerate(rkf.split(X), start=1):
+    k, b = np.polyfit(X[train],
+                      y[train],
+                      1)
+    Z = b + k*X
+    plt.plot(X, Z, label='Test {:02d}'.format(_))
+    b = np.exp(b)
 
 # =============================================================================
 # Leave One Out (LOO)
@@ -201,15 +194,13 @@ b = np.exp(b)
 loo = LeaveOneOut()
 plt.figure()
 plt.scatter(X, y)
-_ = 0
-for train, test in loo.split(X):
-    _ += 1
-k, b = np.polyfit(X[train],
-                  y[train],
-                  1)
-Z = b + k*X
-plt.plot(X, Z, label='Test {:02d}'.format(_))
-b = np.exp(b)
+for _, (train, test) in enumerate(loo.split(X), start=1):
+    k, b = np.polyfit(X[train],
+                      y[train],
+                      1)
+    Z = b + k*X
+    plt.plot(X, Z, label='Test {:02d}'.format(_))
+    b = np.exp(b)
 
 # =============================================================================
 # Leave P Out (LPO)
@@ -217,31 +208,27 @@ b = np.exp(b)
 lpo = LeavePOut(p=2)
 plt.figure()
 plt.scatter(X, y)
-_ = 0
-for train, test in lpo.split(X):
-    _ += 1
-k, b = np.polyfit(X[train],
-                  y[train],
-                  1)
-Z = b + k*X
-plt.plot(X, Z, label='Test {:02d}'.format(_))
-b = np.exp(b)
+for _, (train, test) in enumerate(lpo.split(X), start=1):
+    k, b = np.polyfit(X[train],
+                      y[train],
+                      1)
+    Z = b + k*X
+    plt.plot(X, Z, label='Test {:02d}'.format(_))
+    b = np.exp(b)
 
 # =============================================================================
 # Random Permutations Cross-Validation a.k.a. Shuffle & Split
 # =============================================================================
-ss = ShuffleSplit(n_splits=2, test_size=0.25, random_state=0)
+ss = ShuffleSplit(n_splits=2, test_size=.25, random_state=0)
 plt.figure()
 plt.scatter(X, y)
-_ = 0
-for train, test in ss.split(X):
-    _ += 1
-k, b = np.polyfit(X[train],
-                  y[train],
-                  1)
-Z = b + k*X
-plt.plot(X, Z, label='Test {:02d}'.format(_))
-b = np.exp(b)
+for _, (train, test) in enumerate(ss.split(X), start=1):
+    k, b = np.polyfit(X[train],
+                      y[train],
+                      1)
+    Z = b + k*X
+    plt.plot(X, Z, label='Test {:02d}'.format(_))
+    b = np.exp(b)
 
 # =============================================================================
 # Time Series Split
@@ -249,9 +236,7 @@ b = np.exp(b)
 tscv = TimeSeriesSplit(n_splits=3)
 plt.figure()
 plt.scatter(X, y)
-_ = 0
-for train, test in tscv.split(X):
-    _ += 1
+for _, (train, test) in enumerate(tscv.split(X), start=1):
     k, b = np.polyfit(X
                       [train], y[train], 1)
     Z = b + k*X

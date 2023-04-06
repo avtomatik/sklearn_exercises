@@ -6,24 +6,23 @@
 # =============================================================================
 import matplotlib.pyplot as plt
 import numpy as np
+from data.make_dataset import get_data_frame, get_X_y
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 from sklearn.model_selection import KFold, LeaveOneOut, cross_val_score
 
-from data.make_dataset import get_data_frame, get_X_y
-
-# =============================================================================
-# Labor Capital Intensity
-# =============================================================================
-# =============================================================================
-# Labor Productivity
-# =============================================================================
 X, y = get_data_frame().pipe(get_X_y)
+# =============================================================================
+# Required
+# =============================================================================
 
-X = np.transpose(np.atleast_2d(X))  # Required
+X = np.transpose(np.atleast_2d(X))
 
 
-loo = LeaveOneOut(y.shape[0])
+loo = LeaveOneOut()
+# =============================================================================
+# y.shape[0]
+# =============================================================================
 regr = LinearRegression()
 scores = cross_val_score(regr, X, y, scoring='mean_squared_error', cv=loo)
 print(scores.mean())
