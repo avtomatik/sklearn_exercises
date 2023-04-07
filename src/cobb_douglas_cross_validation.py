@@ -1,5 +1,5 @@
 # =============================================================================
-# Cross-Validation Test on Cobb-Douglas Dataset
+# Cross-Validation on Cobb--Douglas Dataset
 # =============================================================================
 
 
@@ -11,6 +11,9 @@ from sklearn.model_selection import (KFold, LeaveOneOut, LeavePOut,
                                      TimeSeriesSplit)
 
 X, y = get_data_frame().pipe(get_X_y)
+# =============================================================================
+# cross_validator
+# =============================================================================
 # =============================================================================
 # K-Fold
 # =============================================================================
@@ -41,24 +44,25 @@ ss = ShuffleSplit(n_splits=2, test_size=.25, random_state=0)
 # Time Series Split
 # =============================================================================
 tscv = TimeSeriesSplit(n_splits=3)
-plt.figure()
-plt.scatter(X, y)
-f1p = np.polyfit(X, y, deg=1)
-k, b = f1p
-Z = b+k*X
-plt.plot(X, Z)
-# for _, (train, test) in kf.split(X):
-# for _, (train, test) in rkf.split(X):
-# for _, (train, test) in loo.split(X):
-# for _, (train, test) in lpo.split(X):
-# for _, (train, test) in ss.split(X):
-for _, (train, test) in enumerate(tscv.split(X), start=1):
-    f1p = np.polyfit(X[train], y[train], deg=1)
-    k, b = f1p
-    Z = b+k*X
-    plt.plot(X, Z, label='Test %02d' % _)
-    b = np.exp(b)
 
+plt.figure(0)
+plt.scatter(X, y)
+k, b = np.polyfit(X.flatten(), y, deg=1)
+y_pred = np.add(np.multiply(X, k), b)
+plt.plot(X.flatten(), y_pred)
+_b = np.exp(b)
+print(_b)
 plt.legend()
 plt.grid()
 plt.show()
+for _num, cross_validator in enumerate((kf, rkf, loo, lpo, ss, tscv), start=1):
+    plt.figure(_num)
+    for _, (train, test) in enumerate(cross_validator.split(X), start=1):
+        k, b = np.polyfit(X[train].flatten(), y[train], deg=1)
+        y_pred = np.add(np.multiply(X, k), b)
+        plt.plot(X, y_pred, label=f'Split {_:02}')
+        _b = np.exp(b)
+        print(_b)
+    plt.legend()
+    plt.grid()
+    plt.show()
