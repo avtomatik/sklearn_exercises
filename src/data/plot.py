@@ -24,7 +24,7 @@ def plot_turnover(df: DataFrame) -> None:
     # =========================================================================
     # Linear: Fixed Assets Turnover
     # =========================================================================
-    _lin = np.polyfit(
+    polyfit_linear = np.polyfit(
         df.index.to_series().astype(float),
         df.iloc[:, -1].astype(float),
         deg=1
@@ -37,9 +37,8 @@ def plot_turnover(df: DataFrame) -> None:
         np.log(df.iloc[:, -1].astype(float)),
         deg=1
     )
-    df['c_turnover_lin'] = df.index.to_series().mul(_lin[0]).add(_lin[1])
-    df['c_turnover_exp'] = np.exp(
-        df.index.to_series().astype(float).mul(_exp[0]).add(_exp[1]))
+    df['c_turnover_lin'] = np.poly1d(polyfit_linear)(df.index.to_series())
+    df['c_turnover_exp'] = np.exp(np.poly1d(_exp)(df.index.to_series().astype(float)))
     # =========================================================================
     # Deltas
     # =========================================================================
@@ -64,7 +63,7 @@ def plot_turnover(df: DataFrame) -> None:
     plt.plot(
         df.iloc[:, [-4]],
         label='$\\hat K_{{l}} = {:.2f} {:.2f} t, R^2 = {:.4f}$'.format(
-            *_lin[::-1],
+            *polyfit_linear[::-1],
             r2_score(df.iloc[:, -5], df.iloc[:, -4])
         )
     )
