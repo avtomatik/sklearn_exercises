@@ -18,19 +18,11 @@ from data.combine import combine_cobb_douglas
 from data.make_dataset import (get_data_frame, get_data_frame_transformed,
                                get_X_y)
 from data.transform import transform_cobb_douglas
-from sklearn.datasets import load_iris
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 from sklearn.model_selection import (KFold, LeaveOneOut, LeavePOut,
                                      RepeatedKFold, ShuffleSplit,
-                                     TimeSeriesSplit, cross_val_score,
-                                     train_test_split)
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
-# =============================================================================
-# Support Vector Machine
-# =============================================================================
-from sklearn.svm import SVC
+                                     TimeSeriesSplit, cross_val_score)
 
 DIR_SRC = "../data/interim"
 MAP_FIG = {
