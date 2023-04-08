@@ -44,7 +44,11 @@ plot_cobb_douglas(
 
 get_data_frame().pipe(get_data_frame_transformed)
 
+# =============================================================================
+# Make Dataset
+# =============================================================================
 X, y = get_data_frame().pipe(get_X_y)
+print(X)
 
 # =============================================================================
 # TODO: Discrete Laplace Transform
@@ -84,48 +88,48 @@ ss = ShuffleSplit(n_splits=2, test_size=.25, random_state=0)
 # =============================================================================
 # Time Series Split
 # =============================================================================
-X = np.column_stack(np.log(df.iloc[:, -2]))
+
 tscv = TimeSeriesSplit(n_splits=3)
 plt.figure()
 plt.scatter(X, y)
 # =============================================================================
 # for _, (train, test) in enumerate(kf.split(X), start=1):
-#     k, b = np.polyfit(X[train].flatten(), y[train], deg=1)
-#     y_pred = np.add(np.multiply(X, k), b)
-#     plt.plot(X, y_pred, label=f'Test {_:02d}')
+#     polyfit_linear = np.polyfit(X[train].flatten(), y[train], deg=1)
+#     y_train_pred = np.poly1d(polyfit_linear)(X[train])
+#     plt.plot(X[train], y_train_pred, label=f'Split {_:02}')
 #
 # for _, (train, test) in enumerate(rkf.split(X), start=1):
-#     k, b = np.polyfit(X[train].flatten(), y[train], deg=1)
-#     y_pred = np.add(np.multiply(X, k), b)
-#     plt.plot(X, y_pred, label=f'Test {_:02d}')
+#     polyfit_linear = np.polyfit(X[train].flatten(), y[train], deg=1)
+#     y_train_pred = np.poly1d(polyfit_linear)(X[train])
+#     plt.plot(X[train], y_train_pred, label=f'Split {_:02}')
 #
 # for _, (train, test) in enumerate(loo.split(X), start=1):
-#     k, b = np.polyfit(X[train].flatten(), y[train], deg=1)
-#     y_pred = np.add(np.multiply(X, k), b)
-#     plt.plot(X, y_pred, label=f'Test {_:02d}')
+#     polyfit_linear = np.polyfit(X[train].flatten(), y[train], deg=1)
+#     y_train_pred = np.poly1d(polyfit_linear)(X[train])
+#     plt.plot(X[train], y_train_pred, label=f'Split {_:02}')
 #
 # for _, (train, test) in enumerate(lpo.split(X), start=1):
-#     k, b = np.polyfit(X[train].flatten(), y[train], deg=1)
-#     y_pred = np.add(np.multiply(X, k), b)
-#     plt.plot(X, y_pred, label=f'Test {_:02d}')
+#     polyfit_linear = np.polyfit(X[train].flatten(), y[train], deg=1)
+#     y_train_pred = np.poly1d(polyfit_linear)(X[train])
+#     plt.plot(X[train], y_train_pred, label=f'Split {_:02}')
 #
 # for _, (train, test) in enumerate(ss.split(X), start=1):
-#     k, b = np.polyfit(X[train].flatten(), y[train], deg=1)
-#     y_pred = np.add(np.multiply(X, k), b)
-#     plt.plot(X, y_pred, label=f'Test {_:02d}')
+#     polyfit_linear = np.polyfit(X[train].flatten(), y[train], deg=1)
+#     y_train_pred = np.poly1d(polyfit_linear)(X[train])
+#     plt.plot(X[train], y_train_pred, label=f'Split {_:02}')
 # =============================================================================
 
 for _, (train, test) in enumerate(tscv.split(X), start=1):
-    k, b = np.polyfit(X[train].flatten(), y[train], deg=1)
-    y_pred = np.add(np.multiply(X, k), b)
-    plt.plot(X, y_pred, label=f'Test {_:02d}')
+    polyfit_linear = np.polyfit(X[train].flatten(), y[train], deg=1)
+    y_train_pred = np.poly1d(polyfit_linear)(X[train])
+    plt.plot(X[train], y_train_pred, label=f'Split {_:02}')
 
     # =========================================================================
-    # _b = np.exp(b)
+    # _b = np.exp(polyfit_linear[1])
     # =========================================================================
 
-k, b = np.polyfit(X.flatten(), y, deg=1)
-y_pred = np.add(np.multiply(X, k), b)
+polyfit_linear = np.polyfit(X.flatten(), y, deg=1)
+y_pred = np.poly1d(polyfit_linear)(X)
 plt.plot(X, y_pred, label='Test {:02d}'.format(0))
 plt.legend()
 plt.grid()
@@ -140,15 +144,13 @@ plt.show()
 # =============================================================================
 X = np.transpose(np.atleast_2d(X))
 
-
 # =============================================================================
-# X = np.log(X)
+# Make Dataset
 # =============================================================================
-y = np.log(y)
-loo = LeaveOneOut(y.shape[0])
+X, y = get_data_frame().pipe(get_X_y)
+loo = LeaveOneOut()
 regr = LinearRegression()
-scores = cross_val_score(
-    regr, X, y, scoring='mean_squared_error', cv=loo,)
+scores = cross_val_score(regr, X, y, scoring='mean_squared_error', cv=loo)
 print(scores.mean())
 
 

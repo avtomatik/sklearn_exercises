@@ -10,6 +10,9 @@ from sklearn.model_selection import (KFold, LeaveOneOut, LeavePOut,
                                      RepeatedKFold, ShuffleSplit,
                                      TimeSeriesSplit)
 
+# =============================================================================
+# Make Dataset
+# =============================================================================
 X, y = get_data_frame().pipe(get_X_y)
 # =============================================================================
 # cross_validator
@@ -47,10 +50,19 @@ tscv = TimeSeriesSplit(n_splits=3)
 
 plt.figure(0)
 plt.scatter(X, y)
-k, b = np.polyfit(X.flatten(), y, deg=1)
-y_pred = np.add(np.multiply(X, k), b)
+polyfit_linear = np.polyfit(X.flatten(), y, deg=1)
+y_pred = np.poly1d(polyfit_linear)(X)
+
+# =============================================================================
+# https://numpy.org/doc/stable/reference/generated/numpy.poly1d.html
+# =============================================================================
+# =============================================================================
+# https://numpy.org/doc/stable/reference/generated/numpy.polyval.html
+# =============================================================================
+
+
 plt.plot(X.flatten(), y_pred)
-_b = np.exp(b)
+_b = np.exp(polyfit_linear[1])
 print(_b)
 plt.legend()
 plt.grid()
@@ -58,11 +70,12 @@ plt.show()
 for _num, cross_validator in enumerate((kf, rkf, loo, lpo, ss, tscv), start=1):
     plt.figure(_num)
     for _, (train, test) in enumerate(cross_validator.split(X), start=1):
-        k, b = np.polyfit(X[train].flatten(), y[train], deg=1)
-        y_pred = np.add(np.multiply(X, k), b)
-        plt.plot(X, y_pred, label=f'Split {_:02}')
-        _b = np.exp(b)
+        polyfit_linear = np.polyfit(X[train].flatten(), y[train], deg=1)
+        y_train_pred = np.poly1d(polyfit_linear)(X[train])
+        plt.plot(X[train], y_train_pred, label=f'Split {_:02}')
+        _b = np.exp(polyfit_linear[1])
         print(_b)
     plt.legend()
     plt.grid()
     plt.show()
+
