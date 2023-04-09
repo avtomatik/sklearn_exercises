@@ -1,135 +1,260 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Mar  2 21:32:51 2020
+Created on Thu Nov 24 13:45:36 2022
 
-@author: Alexander Mikhailov
+@author: green-machine
 """
 
-
-import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-# =============================================================================
-# Kolmogorov-Smirnov Test for Goodness of Fit
-# =============================================================================
-# from scipy.stats import kstest
-from data.combine import combine_cobb_douglas
-from data.make_dataset import (get_data_frame, get_data_frame_transformed,
-                               get_X_y)
-from data.transform import transform_cobb_douglas
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import r2_score
-from sklearn.model_selection import (KFold, LeaveOneOut, LeavePOut,
-                                     RepeatedKFold, ShuffleSplit,
-                                     TimeSeriesSplit, cross_val_score)
-
-DIR_SRC = "../data/interim"
-MAP_FIG = {
-    'fg_a': 'Chart I Progress in Manufacturing {}$-${} ({}=100)',
-    'fg_b': 'Chart II Theoretical and Actual Curves of Production {}$-${} ({}=100)',
-    'fg_c': 'Chart III Percentage Deviations of $P$ and $P\'$ from Their Trend Lines\nTrend Lines=3 Year Moving Average',
-    'fg_d': 'Chart IV Percentage Deviations of Computed from Actual Product {}$-${}',
-    'fg_e': 'Chart V Relative Final Productivities of Labor and Capital',
-    'year_base': 1899,
-}
-
-os.chdir(DIR_SRC)
-
-plot_cobb_douglas(
-    *combine_cobb_douglas().pipe(transform_cobb_douglas),
-    MAP_FIG
-)
+from data.make_dataset import get_data_frame, get_X_y
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression, RANSACRegressor
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import PolynomialFeatures, StandardScaler
+from sklearn.svm import SVR
+from sklearn.tree import DecisionTreeRegressor
 
 
-get_data_frame().pipe(get_data_frame_transformed)
-
-# =============================================================================
-# Make Dataset
-# =============================================================================
-X, y = get_data_frame().pipe(get_X_y)
-print(X)
-
-# =============================================================================
-# TODO: Discrete Laplace Transform
-# =============================================================================
+def lin_regplot(X, y, model):
+    plt.scatter(X, y, c='blue')
+    plt.plot(X, model.predict(X), color='red')
+    return
 
 
-# =============================================================================
-# Cross Validation
-# =============================================================================
-# =============================================================================
-# K-Fold
-# =============================================================================
-kf = KFold(n_splits=4)
+if __name__ == '__main__':
+    # =========================================================================
+    # Make Dataset
+    # =========================================================================
+    X, y = get_data_frame().pipe(get_X_y)
 
-# =============================================================================
-# Repeated K-Fold
-# =============================================================================
-random_state = 12883823
-rkf = RepeatedKFold(n_splits=2, n_repeats=2, random_state=random_state)
+    lr = LinearRegression()
+    pr = LinearRegression()
+    quadratic = PolynomialFeatures(degree=2)
+    X_quad = quadratic.fit_transform(X)
 
-# =============================================================================
-# Leave One Out (LOO)
-# =============================================================================
-loo = LeaveOneOut()
+    lr.fit(X, y)
+    X_fit = np.arange(X.min(), X.max(), 1)[:, np.newaxis]
+    y_lin_fit = lr.predict(X_fit)
 
-# =============================================================================
-# Leave P Out (LPO)
-# =============================================================================
-lpo = LeavePOut(p=2)
+    pr.fit(X_quad, y)
+    y_quad_fit = pr.predict(quadratic.fit_transform(X_fit))
 
-# =============================================================================
-# Random Permutations Cross-Validation a.k.a. Shuffle & Split
-# =============================================================================
-ss = ShuffleSplit(n_splits=2, test_size=.25, random_state=0)
+    plt.scatter(X, y, label="Trained")
+    plt.plot(X_fit, y_lin_fit, label="Linear", linestyle="--")
+    plt.plot(X_fit, y_quad_fit, label="Quadratic")
+    plt.legend(loc="upper left")
+    plt.grid()
+    plt.show()
 
-# =============================================================================
-# Time Series Split
-# =============================================================================
-tscv = TimeSeriesSplit(n_splits=3)
 
-plt.figure()
-plt.scatter(X, y)
-# =============================================================================
-# for _, (train, test) in enumerate(kf.split(X), start=1):
-#     polyfit_linear = np.polyfit(X[train].flatten(), y[train], deg=1)
-#     y_train_pred = np.poly1d(polyfit_linear)(X[train])
-#     plt.plot(X[train], y_train_pred, label=f'Split {_:02}')
-#
-# for _, (train, test) in enumerate(rkf.split(X), start=1):
-#     polyfit_linear = np.polyfit(X[train].flatten(), y[train], deg=1)
-#     y_train_pred = np.poly1d(polyfit_linear)(X[train])
-#     plt.plot(X[train], y_train_pred, label=f'Split {_:02}')
-#
-# for _, (train, test) in enumerate(loo.split(X), start=1):
-#     polyfit_linear = np.polyfit(X[train].flatten(), y[train], deg=1)
-#     y_train_pred = np.poly1d(polyfit_linear)(X[train])
-#     plt.plot(X[train], y_train_pred, label=f'Split {_:02}')
-#
-# for _, (train, test) in enumerate(lpo.split(X), start=1):
-#     polyfit_linear = np.polyfit(X[train].flatten(), y[train], deg=1)
-#     y_train_pred = np.poly1d(polyfit_linear)(X[train])
-#     plt.plot(X[train], y_train_pred, label=f'Split {_:02}')
-#
-# for _, (train, test) in enumerate(ss.split(X), start=1):
-#     polyfit_linear = np.polyfit(X[train].flatten(), y[train], deg=1)
-#     y_train_pred = np.poly1d(polyfit_linear)(X[train])
-#     plt.plot(X[train], y_train_pred, label=f'Split {_:02}')
-# =============================================================================
+if __name__ == '__main__':
+    # =========================================================================
+    # Make Dataset
+    # =========================================================================
+    X, y = get_data_frame().pipe(get_X_y)
 
-for _, (train, test) in enumerate(tscv.split(X), start=1):
-    polyfit_linear = np.polyfit(X[train].flatten(), y[train], deg=1)
-    y_train_pred = np.poly1d(polyfit_linear)(X[train])
-    plt.plot(X[train], y_train_pred, label=f'Split {_:02}')
+    solver = LinearRegression()
+
+    quadratic = PolynomialFeatures(degree=2)
+    cubic = PolynomialFeatures(degree=3)
+    X_quad = quadratic.fit_transform(X)
+    X_cubic = cubic.fit_transform(X)
 
     # =========================================================================
-    # _b = np.exp(polyfit_linear[1])
+    # Linear Fit
     # =========================================================================
+    X_fit = np.arange(X.min(), X.max(), 1)[:, np.newaxis]
+    solver = solver.fit(X, y)
+    y_lin_fit = solver.predict(X_fit)
+    linear_r2 = r2_score(y, solver.predict(X))
 
-polyfit_linear = np.polyfit(X.flatten(), y, deg=1)
-y_pred = np.poly1d(polyfit_linear)(X)
-plt.plot(X, y_pred, label='Test {:02d}'.format(0))
-plt.legend()
-plt.grid()
-plt.show()
+    # =========================================================================
+    # Quadratic Fit
+    # =========================================================================
+    solver = solver.fit(X_quad, y)
+    y_quad_fit = solver.predict(quadratic.fit_transform(X_fit))
+    quadratic_r2 = r2_score(y, solver.predict(X_quad))
+
+    # =========================================================================
+    # Cubic Fit
+    # =========================================================================
+    solver = solver.fit(X_cubic, y)
+    y_cubic_fit = solver.predict(cubic.fit_transform(X_fit))
+    cubic_r2 = r2_score(y, solver.predict(X_cubic))
+
+    # =========================================================================
+    # Plot the Results
+    # =========================================================================
+    plt.scatter(X, y, label="Train", color="lightgray")
+    plt.plot(
+        X_fit, y_lin_fit,
+        label=f"Linear (d=1), $R^2={linear_r2:,.4f}$",
+        color="blue",
+        lw=2,
+        linestyle=":"
+    )
+    plt.plot(
+        X_fit, y_quad_fit,
+        label=f"Linear (d=2), $R^2={quadratic_r2:,.4f}$",
+        color="red", lw=2, linestyle="-"
+    )
+    plt.plot(
+        X_fit, y_cubic_fit,
+        label=f"Linear (d=2), $R^2={cubic_r2:,.4f}$",
+        color="green",
+        lw=2,
+        linestyle="--"
+    )
+    plt.legend(loc="upper left")
+    plt.grid()
+    plt.show()
+
+
+if __name__ == '__main__':
+    # =========================================================================
+    # Make Dataset
+    # =========================================================================
+    X, y = get_data_frame().pipe(get_X_y)
+
+    tree = DecisionTreeRegressor(max_depth=1)
+    tree.fit(X, y)
+    sort_idx = X.flatten().argsort()
+
+    lin_regplot(X[sort_idx], y[sort_idx], tree)
+    plt.xlabel("Labor Capital Intensity")
+    plt.ylabel("Labor Productivity")
+    plt.grid()
+    plt.show()
+
+
+if __name__ == '__main__':
+    # =========================================================================
+    # Make Dataset
+    # =========================================================================
+    X, y = get_data_frame().pipe(get_X_y)
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=.45, random_state=1
+    )
+
+    forest = RandomForestRegressor(
+        n_estimators=1000, criterion="squared_error", random_state=1, n_jobs=-1
+    )
+    forest.fit(X_train, y_train)
+    y_train_pred = forest.predict(X_train)
+    y_test_pred = forest.predict(X_test)
+
+    plt.scatter(
+        y_train_pred, y_train_pred - y_train,
+        c="black",
+        marker="o",
+        s=35,
+        alpha=.5,
+        label="Train"
+    )
+    plt.scatter(
+        y_test_pred, y_test_pred - y_test,
+        c="lightgreen",
+        marker="s",
+        s=35,
+        alpha=.7,
+        label="Test"
+    )
+    plt.xlabel("Predicted")
+    plt.ylabel("Residuals")
+    plt.legend(loc="upper right")
+    plt.hlines(y=0, xmin=y.min(), xmax=y.max(), lw=2, color="red")
+    plt.xlim([y.min(), y.max()])
+    plt.grid()
+    plt.show()
+    print(
+        f"MSE on Train Data: {mean_squared_error(y_train, y_train_pred):,.4f}")
+    print(f"MSE on Test Data: {mean_squared_error(y_test, y_test_pred):,.4f}")
+    print(f"R**2 on Train Data: {r2_score(y_train, y_train_pred):,.4f}")
+    print(f"R**2 on Test Data: {r2_score(y_test, y_test_pred):,.4f}")
+
+
+if __name__ == '__main__':
+    # =========================================================================
+    # Make Dataset
+    # =========================================================================
+    X, y = get_data_frame().pipe(get_X_y)
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=.45, random_state=1
+    )
+
+    solver = make_pipeline(StandardScaler(), SVR(C=1.0, epsilon=0.2))
+    solver.fit(X_train, y_train)
+
+    y_train_pred = solver.predict(X_train)
+    y_test_pred = solver.predict(X_test)
+
+    plt.scatter(
+        y_train_pred, y_train_pred - y_train,
+        c="black",
+        marker="o",
+        s=35,
+        alpha=.5,
+        label="Train"
+    )
+    plt.scatter(
+        y_test_pred, y_test_pred - y_test,
+        c="lightgreen",
+        marker="s",
+        s=35,
+        alpha=.7,
+        label="Test"
+    )
+    plt.xlabel("Predicted")
+    plt.ylabel("Residuals")
+    plt.legend(loc="upper right")
+    plt.hlines(y=0, xmin=y.min(), xmax=y.max(), lw=2, color="red")
+    plt.xlim([y.min(), y.max()])
+    plt.grid()
+    plt.show()
+    print(
+        f"MSE on Train Data: {mean_squared_error(y_train, y_train_pred):,.4f}")
+    print(f"MSE on Test Data: {mean_squared_error(y_test, y_test_pred):,.4f}")
+    print(f"R**2 on Train Data: {r2_score(y_train, y_train_pred):,.4f}")
+    print(f"R**2 on Test Data: {r2_score(y_test, y_test_pred):,.4f}")
+
+
+if __name__ == '__main__':
+    # =========================================================================
+    # Make Dataset
+    # =========================================================================
+    X, y = get_data_frame().pipe(get_X_y)
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=.4, random_state=1
+    )
+
+    ransac = RANSACRegressor(LinearRegression(),
+                             max_trials=100,
+                             min_samples=10,
+                             residual_threshold=.05,
+                             random_state=0)
+    ransac.fit(X, y)
+
+    inlier_mask = ransac.inlier_mask_
+    outlier_mask = np.logical_not(inlier_mask)
+
+    line_X = np.arange(X.min(), X.max(), 1)
+    line_y_ransac = ransac.predict(line_X[:, np.newaxis])
+
+    plt.scatter(X[inlier_mask], y[inlier_mask],
+                c="blue", marker="o", label="Inliers")
+    plt.scatter(X[outlier_mask], y[outlier_mask],
+                c="lightgreen", marker="s", label="Outliers")
+    plt.plot(line_X, line_y_ransac, color="red")
+    plt.xlabel("Labor Capital Intensity")
+    plt.ylabel("Labor Productivity")
+    plt.legend(loc="upper right")
+    plt.grid()
+    plt.show()

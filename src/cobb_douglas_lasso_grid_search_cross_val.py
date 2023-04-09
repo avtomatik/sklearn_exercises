@@ -38,4 +38,4 @@ y_test_pred = model.predict(X_test)
 # =============================================================================
 # TODO: Revise Fixed Assets Turnover Approximation with Lasso
 # =============================================================================
-print(get_data_frame().pipe(get_data_frame_transformed).iloc[:, [6]])
+print(get_data_frame().pipe(transform_cobb_douglas, year_base=1899)[0].iloc[:, [6]])

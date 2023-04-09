@@ -47,13 +47,18 @@ def calculate_graph_k_folds_linear_regression(
     print('Figure Has Been Plotted')
 
 
-def compare_r2s(X: np.ndarray, y: np.ndarray) -> None:
+def compare_r2s_print_out_coefs(X: np.ndarray, y: np.ndarray) -> None:
+    # =========================================================================
+    # TODO: Split Function to Increase Cohesion
+    # =========================================================================
     solver = LinearRegression().fit(X, y)
     y_pred = solver.predict(X)
 
     r2_solver = solver.score(X, y)
     r2_metrics = r2_score(y, y_pred)
 
+    print(solver.coef_)
+    print(solver.intercept_)
     print(
         f'R**2 Powered by sklearn.linear_model.LinearRegression: {r2_solver:.6}'
     )
@@ -88,5 +93,5 @@ if __name__ == '__main__':
     X, y = get_data_frame().pipe(get_X_y)
 
     calculate_graph_k_folds_linear_regression(X, y)
-    compare_r2s(X, y)
+    compare_r2s_print_out_coefs(X, y)
     get_neg_mean_squared_error_leave_one_out(X, y)

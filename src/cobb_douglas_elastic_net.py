@@ -36,7 +36,7 @@ def main() -> None:
     # =========================================================================
     # Visualize
     # =========================================================================
-    fig, ax = plt.subplots()
+    _fig, ax = plt.subplots()
     ax.plot(alphas, coefs.T)
     ax.set_xscale('log')
     ax.set_xlim(alphas.max(), alphas.min())

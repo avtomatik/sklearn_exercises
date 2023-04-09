@@ -23,13 +23,6 @@ def get_data_frame(path_src: str = "data/interim") -> DataFrame:
     return combine_cobb_douglas()
 
 
-def get_data_frame_transformed(df: DataFrame) -> DataFrame:
-    return df.pipe(
-        transform_cobb_douglas,
-        year_base=1899
-    )[0]
-
-
 def get_X_y(df: DataFrame) -> tuple[np.ndarray]:
     """
 
