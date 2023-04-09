@@ -29,7 +29,7 @@ model = gscv.best_estimator_
 
 model.fit(X_train, y_train)
 model.score(X_test, y_test)
-prediction = model.predict(X_test)
+y_test_pred = model.predict(X_test)
 
 
 # =============================================================================

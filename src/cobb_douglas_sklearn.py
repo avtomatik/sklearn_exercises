@@ -84,12 +84,11 @@ lpo = LeavePOut(p=2)
 # =============================================================================
 ss = ShuffleSplit(n_splits=2, test_size=.25, random_state=0)
 
-
 # =============================================================================
 # Time Series Split
 # =============================================================================
-
 tscv = TimeSeriesSplit(n_splits=3)
+
 plt.figure()
 plt.scatter(X, y)
 # =============================================================================
@@ -131,53 +130,6 @@ for _, (train, test) in enumerate(tscv.split(X), start=1):
 polyfit_linear = np.polyfit(X.flatten(), y, deg=1)
 y_pred = np.poly1d(polyfit_linear)(X)
 plt.plot(X, y_pred, label='Test {:02d}'.format(0))
-plt.legend()
-plt.grid()
-plt.show()
-
-
-# =============================================================================
-# Cross Validation Alternative
-# =============================================================================
-# =============================================================================
-# Required
-# =============================================================================
-X = np.transpose(np.atleast_2d(X))
-
-# =============================================================================
-# Make Dataset
-# =============================================================================
-X, y = get_data_frame().pipe(get_X_y)
-loo = LeaveOneOut()
-regr = LinearRegression()
-scores = cross_val_score(regr, X, y, scoring='mean_squared_error', cv=loo)
-print(scores.mean())
-
-
-lr = LinearRegression()
-lr.fit(X, y)
-
-r2 = r2_score(y, lr.predict(X))
-# =============================================================================
-# r2 = lr.score(X, y)
-# =============================================================================
-print('R2 (test data): {:.2}'.format(r2))
-
-kf = KFold(len(X), n_folds=4)
-# =============================================================================
-# p = np.zeros_like(y)
-# =============================================================================
-for train, test in kf:
-    lr.fit(X[train], y[train])
-    p[test] = lr.predict(X[test])
-    print(lr.predict(X))
-
-plt.figure(1)
-plt.scatter(X, y, label='Original')
-plt.scatter(p, y, label='Linear Fit')
-plt.title('Labor Capital Intensity & Labor Productivity, 1899--1922')
-plt.xlabel('Labor Capital Intensity')
-plt.ylabel('Labor Productivity')
 plt.legend()
 plt.grid()
 plt.show()
