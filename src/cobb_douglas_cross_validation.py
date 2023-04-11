@@ -27,11 +27,12 @@ X, y = get_data_frame().pipe(get_X_y)
 # =============================================================================
 kf = KFold(n_splits=4)
 plt.figure()
+
 plt.scatter(X, y)
-for _, (train, test) in enumerate(kf.split(X), start=1):
-    polyfit_linear = np.polyfit(X[train].flatten(), y[train], deg=1)
-    y_train_pred = np.poly1d(polyfit_linear)(X[train])
-    plt.plot(X[train], y_train_pred, label=f'Split {_:02}')
+for _, (idx_train, idx_test) in enumerate(kf.split(X), start=1):
+    polyfit_linear = np.polyfit(X[idx_train].flatten(), y[idx_train], deg=1)
+    y_train_pred = np.poly1d(polyfit_linear)(X[idx_train])
+    plt.plot(X[idx_train], y_train_pred, label=f'Split {_:02}')
     _b = np.exp(polyfit_linear[1])
 
 # =============================================================================
@@ -40,11 +41,12 @@ for _, (train, test) in enumerate(kf.split(X), start=1):
 random_state = 12883823
 rkf = RepeatedKFold(n_splits=2, n_repeats=2, random_state=random_state)
 plt.figure()
+
 plt.scatter(X, y)
-for _, (train, test) in enumerate(rkf.split(X), start=1):
-    polyfit_linear = np.polyfit(X[train].flatten(), y[train], deg=1)
-    y_train_pred = np.poly1d(polyfit_linear)(X[train])
-    plt.plot(X[train], y_train_pred, label=f'Split {_:02}')
+for _, (idx_train, idx_test) in enumerate(rkf.split(X), start=1):
+    polyfit_linear = np.polyfit(X[idx_train].flatten(), y[idx_train], deg=1)
+    y_train_pred = np.poly1d(polyfit_linear)(X[idx_train])
+    plt.plot(X[idx_train], y_train_pred, label=f'Split {_:02}')
     _b = np.exp(polyfit_linear[1])
 
 # =============================================================================
@@ -52,11 +54,12 @@ for _, (train, test) in enumerate(rkf.split(X), start=1):
 # =============================================================================
 loo = LeaveOneOut()
 plt.figure()
+
 plt.scatter(X, y)
-for _, (train, test) in enumerate(loo.split(X), start=1):
-    polyfit_linear = np.polyfit(X[train].flatten(), y[train], deg=1)
-    y_train_pred = np.poly1d(polyfit_linear)(X[train])
-    plt.plot(X[train], y_train_pred, label=f'Split {_:02}')
+for _, (idx_train, idx_test) in enumerate(loo.split(X), start=1):
+    polyfit_linear = np.polyfit(X[idx_train].flatten(), y[idx_train], deg=1)
+    y_train_pred = np.poly1d(polyfit_linear)(X[idx_train])
+    plt.plot(X[idx_train], y_train_pred, label=f'Split {_:02}')
     _b = np.exp(polyfit_linear[1])
 
 # =============================================================================
@@ -64,11 +67,12 @@ for _, (train, test) in enumerate(loo.split(X), start=1):
 # =============================================================================
 lpo = LeavePOut(p=2)
 plt.figure()
+
 plt.scatter(X, y)
-for _, (train, test) in enumerate(lpo.split(X), start=1):
-    polyfit_linear = np.polyfit(X[train].flatten(), y[train], deg=1)
-    y_train_pred = np.poly1d(polyfit_linear)(X[train])
-    plt.plot(X[train], y_train_pred, label=f'Split {_:02}')
+for _, (idx_train, idx_test) in enumerate(lpo.split(X), start=1):
+    polyfit_linear = np.polyfit(X[idx_train].flatten(), y[idx_train], deg=1)
+    y_train_pred = np.poly1d(polyfit_linear)(X[idx_train])
+    plt.plot(X[idx_train], y_train_pred, label=f'Split {_:02}')
     _b = np.exp(polyfit_linear[1])
 
 # =============================================================================
@@ -76,11 +80,12 @@ for _, (train, test) in enumerate(lpo.split(X), start=1):
 # =============================================================================
 ss = ShuffleSplit(n_splits=2, test_size=.25, random_state=0)
 plt.figure()
+
 plt.scatter(X, y)
-for _, (train, test) in enumerate(ss.split(X), start=1):
-    polyfit_linear = np.polyfit(X[train].flatten(), y[train], deg=1)
-    y_train_pred = np.poly1d(polyfit_linear)(X[train])
-    plt.plot(X[train], y_train_pred, label=f'Split {_:02}')
+for _, (idx_train, idx_test) in enumerate(ss.split(X), start=1):
+    polyfit_linear = np.polyfit(X[idx_train].flatten(), y[idx_train], deg=1)
+    y_train_pred = np.poly1d(polyfit_linear)(X[idx_train])
+    plt.plot(X[idx_train], y_train_pred, label=f'Split {_:02}')
     _b = np.exp(polyfit_linear[1])
 
 # =============================================================================
@@ -88,11 +93,12 @@ for _, (train, test) in enumerate(ss.split(X), start=1):
 # =============================================================================
 tscv = TimeSeriesSplit(n_splits=3)
 plt.figure()
+
 plt.scatter(X, y)
-for _, (train, test) in enumerate(tscv.split(X), start=1):
-    polyfit_linear = np.polyfit(X[train].flatten(), y[train], deg=1)
-    y_train_pred = np.poly1d(polyfit_linear)(X[train])
-    plt.plot(X[train], y_train_pred, label=f'Split {_:02}')
+for _, (idx_train, idx_test) in enumerate(tscv.split(X), start=1):
+    polyfit_linear = np.polyfit(X[idx_train].flatten(), y[idx_train], deg=1)
+    y_train_pred = np.poly1d(polyfit_linear)(X[idx_train])
+    plt.plot(X[idx_train], y_train_pred, label=f'Split {_:02}')
     _b = np.exp(polyfit_linear[1])
 
 polyfit_linear = np.polyfit(X.flatten(), y, deg=1)
