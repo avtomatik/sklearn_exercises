@@ -9,7 +9,7 @@ Created on Tue Apr  4 22:02:35 2023
 
 from operator import itemgetter
 
-from data.collect import stockpile_usa_hist
+from data.stockpile import stockpile_usa_hist
 from pandas import DataFrame
 
 
