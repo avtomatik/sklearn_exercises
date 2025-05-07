@@ -10,11 +10,10 @@ Created on Tue Apr  4 21:04:16 2023
 from functools import cache
 
 import pandas as pd
-from pandas import DataFrame
 
 
 @cache
-def read_usa_hist(filepath_or_buffer: str) -> DataFrame:
+def read_usa_hist(filepath_or_buffer: str) -> pd.DataFrame:
     """
     Retrieves Data from Enumerated Historical Datasets
     Parameters
@@ -22,7 +21,7 @@ def read_usa_hist(filepath_or_buffer: str) -> DataFrame:
     filepath_or_buffer : str
     Returns
     -------
-    DataFrame
+    pd.DataFrame
         ================== =================================
         df.index           Period
         df.iloc[:, 0]      Series IDs

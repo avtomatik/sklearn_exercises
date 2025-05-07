@@ -8,11 +8,11 @@ Created on Tue Apr  4 21:21:43 2023
 
 
 import numpy as np
-from pandas import DataFrame
+import pandas as pd
 from sklearn.linear_model import LinearRegression
 
 
-def transform_cobb_douglas(df: DataFrame, year_base: int) -> tuple[DataFrame, tuple[float]]:
+def transform_cobb_douglas(df: pd.DataFrame, year_base: int) -> tuple[pd.DataFrame, tuple[float]]:
     """
         ================== =================================
         df.index           Period
@@ -78,13 +78,13 @@ def transform_cobb_douglas(df: DataFrame, year_base: int) -> tuple[DataFrame, tu
     return df, (k, np.exp(b))
 
 
-def transform_cobb_douglas_sklearn(df: DataFrame) -> DataFrame:
+def transform_cobb_douglas_sklearn(df: pd.DataFrame) -> pd.DataFrame:
     """
 
 
     Parameters
     ----------
-    df : DataFrame
+    df : pd.DataFrame
         ================== =================================
         df.index           Period
         df.iloc[:, 0]      Capital

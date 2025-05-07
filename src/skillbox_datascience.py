@@ -6,17 +6,15 @@ Created on Sun Jun 14 20:45:47 2020
 """
 
 
-from pathlib import Path
-
 import pandas as pd
 from sklearn.ensemble import GradientBoostingClassifier
+from src.config import DATA_DIR
 
 
 def main(
-    dir_src: str = '/home/green-machine/Downloads',
     file_name: str = 'trips_data.xlsx'
 ) -> None:
-    trips = pd.read_excel(Path(dir_src).joinpath(file_name))
+    trips = pd.read_excel(DATA_DIR.joinpath(file_name))
     trips_processed = pd.get_dummies(
         trips,
         columns=[

@@ -9,27 +9,27 @@ Created on Tue Apr  4 21:11:07 2023
 
 import os
 from functools import cache
-from pathlib import Path
 
 import numpy as np
+import pandas as pd
 from data.combine import combine_cobb_douglas
 from data.transform import transform_cobb_douglas
-from pandas import DataFrame
+from src.config import DATA_DIR
 
 
 @cache
-def get_data_frame(path_src: str = "data/interim") -> DataFrame:
-    os.chdir(Path(__file__).parent.parent.parent.resolve().joinpath(path_src))
+def get_data_frame() -> pd.DataFrame:
+    os.chdir(DATA_DIR)
     return combine_cobb_douglas()
 
 
-def get_X_y(df: DataFrame) -> tuple[np.ndarray]:
+def get_X_y(df: pd.DataFrame) -> tuple[np.ndarray]:
     """
 
 
     Parameters
     ----------
-    df : DataFrame
+    df : pd.DataFrame
         DESCRIPTION.
 
     Returns

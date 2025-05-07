@@ -9,11 +9,11 @@ Created on Tue Apr  4 22:02:35 2023
 
 from operator import itemgetter
 
+import pandas as pd
 from data.stockpile import stockpile_usa_hist
-from pandas import DataFrame
 
 
-def combine_cobb_douglas(series_number: int = 3) -> DataFrame:
+def combine_cobb_douglas(series_number: int = 3) -> pd.DataFrame:
     """
     Original Cobb--Douglas Data Collection Extension
     Parameters
@@ -22,7 +22,7 @@ def combine_cobb_douglas(series_number: int = 3) -> DataFrame:
         DESCRIPTION. The default is 3.
     Returns
     -------
-    DataFrame
+    pd.DataFrame
         ================== =================================
         df.index           Period
         df.iloc[:, 0]      Capital

@@ -9,12 +9,12 @@ Created on Wed Apr  5 22:12:38 2023
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from numpy.fft import rfft
-from pandas import DataFrame
 from sklearn.metrics import r2_score
 
 
-def plot_turnover(df: DataFrame) -> None:
+def plot_turnover(df: pd.DataFrame) -> None:
     """Static Fixed Assets Turnover Approximation
         ================== =================================
         df.index           Period

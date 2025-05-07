@@ -7,14 +7,14 @@ Created on Tue Apr  4 21:19:45 2023
 """
 
 
-from pandas import DataFrame
+import pandas as pd
 
 
-def pull_by_series_id(df: DataFrame, series_id: str) -> DataFrame:
+def pull_by_series_id(df: pd.DataFrame, series_id: str) -> pd.DataFrame:
     """
     Parameters
     ----------
-    df : DataFrame
+    df : pd.DataFrame
         ================== =================================
         df.index           Period
         df.iloc[:, 0]      Series IDs
@@ -23,7 +23,7 @@ def pull_by_series_id(df: DataFrame, series_id: str) -> DataFrame:
     series_id : str
     Returns
     -------
-    DataFrame
+    pd.DataFrame
         ================== =================================
         df.index           Period
         df.iloc[:, 0]      Series
@@ -31,5 +31,5 @@ def pull_by_series_id(df: DataFrame, series_id: str) -> DataFrame:
     """
     assert df.shape[1] == 2
     return df[df.iloc[:, 0] == series_id].iloc[:, [1]].rename(
-        columns={"value": series_id}
+        columns={'value': series_id}
     )
